@@ -3,8 +3,10 @@
 body {
     color: white;
     font-family: "Nunito", sans-serif;
-    background: rgb(40, 40, 40) !important;
-
+    background: linear-gradient(135deg, #c3f0f9 0%, #f9f3ff 100%) !important;
+    align-items: center;
+    justify-content: center;
+    
 }
 
 /* All users */
