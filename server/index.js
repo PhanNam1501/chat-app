@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 });
 
 const port = process.env.PORT || 5000;
-const uri = process.env.MONGODB_URL;
+const uri = process.env.MONGODB_URL_1;
 
 app.listen(port, (req, res) => {
     console.log(`Server running on port: ${port}`);
