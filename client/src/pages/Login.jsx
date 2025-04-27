@@ -16,9 +16,9 @@ const Login = () => {
     return <>
         <Form onSubmit={loginUser}>
             <Row className="login-container">
-                <Col xs={10} md={6} lg={4} className="login-card">
+                <Col xs={10} md={6} lg={4} >
                     <Stack gap={3}>
-                        <h2 className="text-center mb-4">Login</h2>
+                        <h2 className="login-text">Login</h2>
 
                         <Form.Control type="email"
                             placeholder="Email"

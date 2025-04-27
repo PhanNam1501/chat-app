@@ -35,3 +35,8 @@
   .login-button:hover {
     background: linear-gradient(to right, #7a3eff, #5e9eff);
   }
+
+  .login-text {
+    color: rgb(255, 255, 255);
+    text-align: center;
+  }
