@@ -6,7 +6,8 @@ export const postRequest = async (url, body) => {
         headers: {
             "Content-Type": "application/json"
         },
-        body
+        body,
+        credentials: "include" // Include credentials (cookies) in the request
     })
 
     const data = await response.json();
