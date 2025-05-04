@@ -52,9 +52,18 @@ export const AuthContextProvider = ({ children }) => {
         setUser(response);
     }, [registerInfo]);
 
-    const logoutUser = useCallback(() => {
-        localStorage.removeItem("User");
-        setUser(null);
+    const logoutUser = useCallback(async () => {
+        try {
+            await fetch(`${baseUrl}/users/logout`, {
+                method: 'POST',
+                credentials: 'include', // important for cookie
+            });
+    
+            localStorage.removeItem("User");
+            setUser(null);
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
     }, []);
 
     const loginUser = useCallback(async (e) => {

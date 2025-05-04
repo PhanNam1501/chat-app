@@ -8,21 +8,23 @@ const session = require('express-session');
 require("dotenv").config();
 
 const app = express();
+const sessionSecret = process.env.SESSION_SECRET_KEY;
 
 app.use(express.json());
 app.use(cors({
     origin: "http://localhost:5173", // your frontend URL
     credentials: true,               // allow sending cookies
+    ttl: 60 * 60 * 24,
 }));
 app.use(session({
-    secret: 'your_secret_key',
+    secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: true,
     cookie: {
-        secure: false, 
+        secure: process.env.NODE_ENV === 'production', 
         httpOnly: true, // Prevent XSS attacks
         sameSite: 'strict', // Prevent CSRF attacks
-        maxAge: 24 * 60 * 60 * 1000 // Set session expiration (e.g., 24 hours)
+        maxAge: 1000 * 60 * 60 * 24, // Set session expiration
     }
 }));
 
@@ -75,8 +77,7 @@ const uri = process.env.MONGODB_URL_1;
 app.listen(port, (req, res) => {
     console.log(`Server running on port: ${port}`);
 });
-mongoose
-    .connect(uri, {
+mongoose.connect(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
