@@ -58,17 +58,36 @@ const loginUser = async (req, res) => {
         if (!isValidPassword)
             return res.status(400).json("Invalid email or password...");
 
+        const token = jwt.sign(
+            { _id: user._id, email: user.email }, 
+            process.env.JWT_SECRET_KEY, 
+            { expiresIn: '24h' } // Expires in 24 hour
+        );
+
+        res.cookie("access_token", token, {
+            httpOnly: true, // Can't be accessed via JavaScript
+            secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
+            sameSite: "Strict", // Prevent CSRF attacks
+            maxAge: 3600000 * 24 // 24 hour
+        });
+
         req.session.userId = user._id; // SET SESSION HERE
         //console.log("Session ID:", req.sessionID);
 
-        const token = createToken(user._id);
+        
 
-        res.status(200).json({ _id: user._id, name: user.name, email, token });
+        res.status(200).json({ _id: user._id, name: user.name, email });
     } catch (error) {
         console.log(error)
         res.status(500).json(error);
     }
 };
+
+const logoutUser = (req, res) => {
+    res.clearCookie("access_token");
+    res.status(200).json("Logged out successfully");
+};
+
 
 const findUser = async (req, res) => {
     const userId = req.params.userId;

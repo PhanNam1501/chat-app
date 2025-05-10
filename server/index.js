@@ -1,14 +1,25 @@
 const express = require("express");
 const cors = require("cors");
+const path = require('path');
+const helmet = require('helmet');
 const mongoose = require("mongoose");
 const userRoute = require("./Routes/userRoute");
 const chatRoute = require("./Routes/chatRoute");
 const messageRoute = require("./Routes/messageRoute");
 const session = require('express-session');
+const rateLimit = require('express-rate-limit');
 require("dotenv").config();
 
 const app = express();
 const sessionSecret = process.env.SESSION_SECRET_KEY;
+
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 5, // Limit to 5 requests per IP per window
+    message: 'Too many login attempts, please try again later.',
+});
+
+app.use('/login', loginLimiter);
 
 app.use(express.json());
 app.use(cors({
@@ -38,6 +49,8 @@ app.post('/login', (req, res) => {
 app.use("/api/users", userRoute);
 app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
+app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use(helmet()); // Add security headers
 
 app.get("/", (req, res) => {
     //res.send("Welcome to our chat app APIs..")
