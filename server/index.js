@@ -1,4 +1,6 @@
 const express = require("express");
+const https = require("https");
+const fs = require("fs");
 const cors = require("cors");
 const path = require('path');
 const helmet = require('helmet');
@@ -6,12 +8,22 @@ const mongoose = require("mongoose");
 const userRoute = require("./Routes/userRoute");
 const chatRoute = require("./Routes/chatRoute");
 const messageRoute = require("./Routes/messageRoute");
+const uploadRoute = require("./Routes/uploadRoute");
 const session = require('express-session');
 const rateLimit = require('express-rate-limit');
 require("dotenv").config();
 
 const app = express();
 const sessionSecret = process.env.SESSION_SECRET_KEY;
+
+const sslOptions = {
+  key: fs.readFileSync("./cert/key.pem"),
+  cert: fs.readFileSync("./cert/cert.pem"),
+};
+
+https.createServer(sslOptions, app).listen(process.env.PORT || 443, () => {
+  console.log("HTTPS server running on port " + (process.env.PORT || 443));
+});
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -50,10 +62,28 @@ app.use("/api/users", userRoute);
 app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
 app.use('/public', express.static(path.join(__dirname, 'public')));
-app.use(helmet()); // Add security headers
+app.use(
+  helmet({
+    hidePoweredBy: true, // Hides "X-Powered-By: Express"
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://trusted.cdn.com"], // Add trusted script sources
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+    referrerPolicy: { policy: "no-referrer" },
+    frameguard: { action: "deny" }, // Prevent clickjacking
+    xssFilter: true, // Older browsers, safe to keep
+    noSniff: true,   // Prevent MIME-type sniffing
+  })
+);
+
+app.disable("x-powered-by"); // Redundant if using helmet, but adds clarity // Add security headers
+app.use("/api", uploadRoute);
 
 app.get("/", (req, res) => {
-    //res.send("Welcome to our chat app APIs..")
     if (req.session.authenticated) {
         // User is authenticated, display their data
         res.send("Welcome to our chat app APIs..")
@@ -67,7 +97,7 @@ app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);
-            return res.status(500).send('An error occurred while logging out.');
+            return res.status(500).json({ message: "An error occurred during logout. Please try again." });
         }
 
         // Clear the session cookie
