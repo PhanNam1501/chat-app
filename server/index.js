@@ -28,10 +28,17 @@ https.createServer(sslOptions, app).listen(process.env.PORT || 443, () => {
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 5, // Limit to 5 requests per IP per window
-    message: 'Too many login attempts, please try again later.',
+    message: {
+    status: 429,
+    error: 'Too many login attempts, please try again after 15 minutes.',
+    },
+    standardHeaders: true, // Return rate limit info in `RateLimit-*` headers
+    legacyHeaders: false,   // Disable `X-RateLimit-*` headers (deprecated)
+    skipSuccessfulRequests: true // Only count failed attempts (optional, based on use case)
 });
 
 app.use('/login', loginLimiter);
+app.use('/register', loginLimiter);
 
 app.use(express.json());
 app.use(cors({
