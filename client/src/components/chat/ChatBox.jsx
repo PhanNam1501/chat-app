@@ -11,9 +11,9 @@ const ChatBox = () => {
         useContext(ChatContext)
     const { recipientUser } = userFetchRecipientUser(currentChat, user)
     const [textMessage, setTextMessage ] = useState("")
-    console.log("setTextMessage:", setTextMessage);
+    //console.log("setTextMessage:", setTextMessage);
 
-    console.log("text", textMessage);
+    //console.log("text", textMessage);
 
     if (!recipientUser)
         return (
