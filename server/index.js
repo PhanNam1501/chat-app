@@ -26,10 +26,16 @@ https.createServer(sslOptions, app).listen(process.env.PORT || 443, () => {
 });
 
 const loginLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // Limit to 5 requests per IP per window
-    message: 'Too many login attempts, please try again later.',
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  handler: (req, res) => {
+    //console.log("Too many requests from:", req.ip);
+    res.status(429).json({ message: "Too many login attempts. Try again later." });
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
+
 
 app.use('/login', loginLimiter);
 
@@ -58,9 +64,6 @@ app.post('/login', (req, res) => {
     res.redirect('/');
 });
 
-app.use("/api/users", userRoute);
-app.use("/api/chats", chatRoute);
-app.use("/api/messages", messageRoute);
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use(
   helmet({
@@ -81,6 +84,10 @@ app.use(
 );
 
 app.disable("x-powered-by"); // Redundant if using helmet, but adds clarity // Add security headers
+app.use("/api/users", userRoute);
+app.use("/api/chats", chatRoute);
+app.use("/api/messages", messageRoute);
+
 app.use("/api", uploadRoute);
 
 app.get("/", (req, res) => {

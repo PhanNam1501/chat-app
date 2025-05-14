@@ -7,11 +7,24 @@ const {
 } = require("../middlewares/validateUser");
 const path = require('path');
 const fs = require('fs');
+const rateLimit = require("express-rate-limit");
 const router = express.Router();
 const uploadsDir = path.join(__dirname, '../uploads');
 
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  handler: (req, res) => {
+    console.log("Too many requests from:", req.ip);
+    res.status(429).json({ message: "Too many login attempts. Try again later." });
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+
 router.post("/register", registerUser, registerValidationRules, validate);
-router.post("/login", loginUser, loginValidationRules, validate);
+router.post("/login", loginLimiter, loginUser, loginValidationRules, validate);
 router.post("/logout", (req, res) => {
     req.session.destroy(err => {
         if (err) {
