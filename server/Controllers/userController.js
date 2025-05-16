@@ -58,6 +58,9 @@ const loginUser = async (req, res) => {
         if (!isValidPassword)
             return res.status(400).json("Invalid email or password...");
 
+        req.session.userId = user._id; // SET SESSION HERE
+        console.log("Session ID:", req.sessionID);
+
         const token = createToken(user._id);
 
         res.status(200).json({ _id: user._id, name: user.name, email, token });
