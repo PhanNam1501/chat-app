@@ -61,6 +61,7 @@ export const AuthContextProvider = ({ children }) => {
     
             localStorage.removeItem("User");
             setUser(null);
+            window.location.reload();
         } catch (error) {
             console.error('Logout failed:', error);
         }
