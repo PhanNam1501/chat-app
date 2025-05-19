@@ -7,6 +7,7 @@ const SECRET_KEY = process.env.SECRET_KEY;
 
 // Hàm mã hóa tin nhắn
 const encryptMessage = (text) => {
+    console.log("text: ", text);
     const cipher = crypto.createCipher('aes-256-cbc', SECRET_KEY);
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
@@ -37,6 +38,8 @@ const createMessage = async (req, res) => {
         chatId, senderId, text: encryptedText
     });
 
+    await message.save();
+
     try {
         const response = {
             chatId: message.chatId,
@@ -57,9 +60,11 @@ const getMessage = async (req, res) => {
     if (!chatId) {
         return res.status(400).json({ message: "chatId is required" });
     }
+    console.log("chatId: ", chatId);
 
     try {
         const messages = await messageModel.find({ chatId });
+        console.log("messages: ", messages);
         
         
         const decryptedMessages = messages.map(message => ({

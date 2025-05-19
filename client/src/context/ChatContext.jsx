@@ -45,6 +45,7 @@ export const ChatContextProvider = ({ children, user }) => {
 
     //send message
     useEffect(() => {
+        console.log("socket", socket);
         if (socket === null) return;
 
         const recipientId = currentChat?.members?.find((id) => id !== user?._id);
@@ -67,8 +68,17 @@ export const ChatContextProvider = ({ children, user }) => {
         };
     }, [socket, currentChat]);
 
+     // LOAD SAVED CHAT ON REFRESH
+    useEffect(() => {
+        const savedChat = localStorage.getItem("currentChat");
+        if (savedChat) {
+            setCurrentChat(JSON.parse(savedChat));
+        }
+    }, []);
 
-    console.log("currentChat", currentChat)
+    
+
+
     useEffect(() => {
         const getUsers = async () => {
             console.log("User", user);
