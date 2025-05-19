@@ -4,7 +4,6 @@ node {
     git branch: 'final_2', credentialsId: 'my-sonarqube-token', url: 'https://github.com/PhanNam1501/chat-app.git'
   }
   stage('SonarQube Analysis') {
-    def scannerHome = tool 'SonarScanner';
     def scannerHome = tool 'SonarQube Scanner';
     withSonarQubeEnv() {
       sh "${scannerHome}/bin/sonar-scanner"
