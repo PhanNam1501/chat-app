@@ -1,6 +1,6 @@
 node {
   stage('SCM') {
-    git branch: 'final_2', credentialsId: 'my-sonarqube-token', url: 'https://github.com/PhanNam1501/chat-app.git'
+    git branch: 'feat/refactoring-socket', credentialsId: 'my-sonarqube-token', url: 'https://github.com/PhanNam1501/chat-app.git'
   }
   stage('SonarQube Analysis') {
     def scannerHome = tool 'SonarQube Scanner';
