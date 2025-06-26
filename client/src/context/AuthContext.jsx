@@ -19,8 +19,8 @@ export const AuthContextProvider = ({ children }) => {
         password: ""
     });
 
-    console.log("Userr", user);
-    console.log("loginInfo", loginInfo);
+    //console.log("Userr", user);
+    //console.log("loginInfo", loginInfo);
     useEffect(() => {
         const user = localStorage.getItem("User")
 
@@ -52,9 +52,19 @@ export const AuthContextProvider = ({ children }) => {
         setUser(response);
     }, [registerInfo]);
 
-    const logoutUser = useCallback(() => {
-        localStorage.removeItem("User");
-        setUser(null);
+    const logoutUser = useCallback(async () => {
+        try {
+            await fetch(`${baseUrl}/users/logout`, {
+                method: 'POST',
+                credentials: 'include', // important for cookie
+            });
+    
+            localStorage.removeItem("User");
+            setUser(null);
+            window.location.reload();
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
     }, []);
 
     const loginUser = useCallback(async (e) => {
