@@ -3,8 +3,10 @@
 body {
     color: white;
     font-family: "Nunito", sans-serif;
-    background: rgb(40, 40, 40) !important;
-
+    background: #2C2F33 !important;
+    align-items: center;
+    justify-content: center;
+    
 }
 
 /* All users */
@@ -61,7 +63,7 @@ body {
   .chat-box {
     max-height: calc(100vh - 10rem);
     overflow-y: auto;
-    background: rgb(25, 25, 25);
+    background: #2C2F33;
     border-radius: 10px;
   }
   
@@ -76,7 +78,7 @@ body {
     justify-content: center;
     padding: 0.75rem;
     color: white;
-    background: rgb(30, 30, 30);
+    background: #2C2F33;
   }
   
   /* Messages */
@@ -108,7 +110,7 @@ body {
   /* Chat Input  */
   .chat-input {
     width: 100%;
-    background: rgb(30, 30, 30);
+    background: #2C2F33;
     padding: 1rem;
   }
   .send-btn {

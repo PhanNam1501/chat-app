@@ -65,6 +65,7 @@ const ChatBox = () => {
                     </svg>
                 </button>
             </Stack>
+            
         </Stack>
     );
 };

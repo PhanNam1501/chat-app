@@ -55,6 +55,7 @@ export const AuthContextProvider = ({ children }) => {
     const logoutUser = useCallback(() => {
         localStorage.removeItem("User");
         setUser(null);
+        window.location.reload();
     }, []);
 
     const loginUser = useCallback(async (e) => {
